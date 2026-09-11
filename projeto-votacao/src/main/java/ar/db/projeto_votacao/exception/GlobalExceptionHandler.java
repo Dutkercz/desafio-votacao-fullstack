@@ -12,10 +12,19 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 @Slf4j
 public class GlobalExceptionHandler {
 
-    @ExceptionHandler(AssociateAlreadyRegisteredException.class)
-    public ResponseEntity<ProblemDetail> associadoJaExisteException(AssociateAlreadyRegisteredException e) {
-        ProblemDetail errorHandler =  ProblemDetail
+    @ExceptionHandler({AssociateAlreadyRegisteredException.class, SessionAlreadyRegistered.class})
+    public ResponseEntity<ProblemDetail> associadoJaExisteException(RuntimeException e) {
+        ProblemDetail detail =  ProblemDetail
                 .forStatusAndDetail(HttpStatusCode.valueOf(409), e.getMessage());
-        return ResponseEntity.status(HttpStatus.CONFLICT).body(errorHandler);
+        log.warn("Cadastro duplicado {}", e.getMessage());
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(detail);
+    }
+
+    @ExceptionHandler(AgendaNotFound.class)
+    public ResponseEntity<ProblemDetail> entidadeNaoEncontradaException(RuntimeException e) {
+        ProblemDetail detail =  ProblemDetail
+                .forStatusAndDetail(HttpStatusCode.valueOf(404), e.getMessage());
+        log.warn("Cadastro não encontrado {}", e.getMessage());
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(detail);
     }
 }

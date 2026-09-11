@@ -25,7 +25,7 @@ public class AssociadoController {
     public ResponseEntity<AssociadoResponseDto> novoAssociado(@RequestBody @Valid AssociadoRequestDto requestDto,
                                                               UriComponentsBuilder builder) {
         AssociadoResponseDto responseDto = associadoService.cadastrarAssociado(requestDto);
-        URI uri = builder.path("/api/vi/associado/{id}")
+        URI uri = builder.path("/api/vi/associados/{id}")
                          .buildAndExpand(responseDto.id())
                          .toUri();
         return ResponseEntity.created(uri).body(responseDto);

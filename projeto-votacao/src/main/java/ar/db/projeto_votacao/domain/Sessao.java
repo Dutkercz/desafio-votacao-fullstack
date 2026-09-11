@@ -20,13 +20,13 @@ public class Sessao {
     private Pauta pauta;
 
     @Column(updatable = false, nullable = false)
-    private LocalDateTime inicio;
+    private LocalDateTime inicio = LocalDateTime.now();
 
+    @Column(updatable = false, nullable = false)
     private LocalDateTime fim;
 
-    public Sessao(Pauta pauta, Integer endingMinutes) {
+    public Sessao(Pauta pauta) {
         this.pauta = pauta;
-        this.inicio = LocalDateTime.now();
-        this.fim = inicio.plusMinutes(endingMinutes);
     }
+
 }

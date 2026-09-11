@@ -1,0 +1,34 @@
+package ar.db.projeto_votacao.controller;
+
+import ar.db.projeto_votacao.dto.SessaoRequestDto;
+import ar.db.projeto_votacao.dto.SessaoResponseDto;
+import ar.db.projeto_votacao.service.SessaoService;
+import jakarta.validation.Valid;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.util.UriComponentsBuilder;
+
+import java.net.URI;
+
+@RestController
+@RequestMapping("/api/v1/sessoes")
+public class SessaoController {
+
+    private final SessaoService sessaoService;
+
+    public SessaoController(SessaoService sessaoService) {
+        this.sessaoService = sessaoService;
+    }
+
+    @PostMapping
+    public ResponseEntity<SessaoResponseDto> abrirSessao(@RequestBody @Valid SessaoRequestDto requestDto,
+                                                         UriComponentsBuilder builder) {
+        SessaoResponseDto responseDto = sessaoService.iniciarSessao(requestDto);
+        URI uri = builder.path("/api/v1/sessoes/{id}")
+                    .buildAndExpand(responseDto.id()).toUri();
+        return ResponseEntity.created(uri).body(responseDto);
+    }
+}
