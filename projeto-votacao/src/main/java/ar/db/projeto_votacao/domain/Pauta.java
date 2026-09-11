@@ -23,6 +23,9 @@ public class Pauta {
     @Column(nullable = false)
     private String titulo;
 
+    @OneToOne
+    private Sessao sessao;
+
     @OneToMany(mappedBy = "pauta")
     private List<Voto> votos = new ArrayList<>();
 
