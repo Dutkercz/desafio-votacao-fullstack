@@ -4,6 +4,7 @@ import ar.db.projeto_votacao.dto.SessaoRequestDto;
 import ar.db.projeto_votacao.dto.SessaoResponseDto;
 import ar.db.projeto_votacao.service.SessaoService;
 import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -15,13 +16,10 @@ import java.net.URI;
 
 @RestController
 @RequestMapping("/api/v1/sessoes")
+@RequiredArgsConstructor
 public class SessaoController {
 
     private final SessaoService sessaoService;
-
-    public SessaoController(SessaoService sessaoService) {
-        this.sessaoService = sessaoService;
-    }
 
     @PostMapping
     public ResponseEntity<SessaoResponseDto> abrirSessao(@RequestBody @Valid SessaoRequestDto requestDto,
