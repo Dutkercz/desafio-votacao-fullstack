@@ -20,11 +20,27 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.CONFLICT).body(detail);
     }
 
-    @ExceptionHandler(AgendaNotFound.class)
+    @ExceptionHandler({AgendaNotFound.class, AssociateNotExistException.class})
     public ResponseEntity<ProblemDetail> entidadeNaoEncontradaException(RuntimeException e) {
         ProblemDetail detail =  ProblemDetail
                 .forStatusAndDetail(HttpStatusCode.valueOf(404), e.getMessage());
         log.warn("Cadastro não encontrado {}", e.getMessage());
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(detail);
+    }
+
+    @ExceptionHandler(SessionAlreadyClosed.class)
+    public ResponseEntity<ProblemDetail> sessaoEncerrada(SessionAlreadyClosed e) {
+        ProblemDetail detail =  ProblemDetail
+                .forStatusAndDetail(HttpStatusCode.valueOf(400), e.getMessage());
+        log.warn("Sessao encerrada {}", e.getMessage());
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(detail);
+    }
+
+    @ExceptionHandler(AssociateAlreadyVoted.class)
+    public ResponseEntity<ProblemDetail> sessaoEncerrada(AssociateAlreadyVoted e) {
+        ProblemDetail detail =  ProblemDetail
+                .forStatusAndDetail(HttpStatusCode.valueOf(403), e.getMessage());
+        log.warn("Associado tentando registrar novo voto {}", e.getMessage());
+        return ResponseEntity.status(HttpStatus.FORBIDDEN).body(detail);
     }
 }
