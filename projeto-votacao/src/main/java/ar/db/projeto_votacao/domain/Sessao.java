@@ -32,4 +32,7 @@ public class Sessao {
         this.pauta = pauta;
     }
 
+    public boolean estaEncerrada() {
+        return LocalDateTime.now().isAfter(fim);
+    }
 }
