@@ -2,10 +2,7 @@ package ar.db.projeto_votacao.domain;
 
 import ar.db.projeto_votacao.domain.enums.TipoVoto;
 import jakarta.persistence.*;
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 @Entity
 @Getter
@@ -25,5 +22,12 @@ public class Voto {
     private Pauta pauta;
 
     @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
     private TipoVoto tipoVoto;
+
+    public Voto(Associado associado, Pauta pauta, TipoVoto tipoVoto) {
+        this.associado = associado;
+        this.pauta = pauta;
+        this.tipoVoto = tipoVoto;
+    }
 }
