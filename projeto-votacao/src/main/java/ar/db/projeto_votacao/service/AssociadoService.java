@@ -22,7 +22,7 @@ public class AssociadoService {
             throw new AssociateAlreadyRegisteredException("Associado já cadastrado");
         }
 
-        Associado associado = new Associado(requestDto.nome(), requestDto.cpf());
+        Associado associado = new Associado(requestDto.cpf());
         associadoRepository.save(associado);
         return new AssociadoResponseDto(associado);
     }

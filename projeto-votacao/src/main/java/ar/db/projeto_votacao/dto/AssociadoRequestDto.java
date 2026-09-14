@@ -4,9 +4,6 @@ import jakarta.validation.constraints.NotBlank;
 
 public record AssociadoRequestDto(
         @NotBlank
-        String nome,
-
-        @NotBlank
         String cpf
 ) {
 }

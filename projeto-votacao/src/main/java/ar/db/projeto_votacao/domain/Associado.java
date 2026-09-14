@@ -17,14 +17,10 @@ public class Associado {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false)
-    private String nome;
-
     @Column(length = 11, nullable = false, unique = true)
     private String cpf;
 
-    public Associado(String nome, String cpf) {
-        this.nome = nome;
+    public Associado(String cpf) {
         this.cpf = cpf;
     }
 }
