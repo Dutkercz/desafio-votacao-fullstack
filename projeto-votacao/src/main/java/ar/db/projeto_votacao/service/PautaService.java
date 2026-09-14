@@ -1,8 +1,10 @@
 package ar.db.projeto_votacao.service;
 
 import ar.db.projeto_votacao.domain.Pauta;
+import ar.db.projeto_votacao.domain.enums.TipoVoto;
 import ar.db.projeto_votacao.dto.PautaRequestDto;
 import ar.db.projeto_votacao.dto.PautaResponseDto;
+import ar.db.projeto_votacao.dto.PautaResultadoDto;
 import ar.db.projeto_votacao.exception.AgendaNotFound;
 import ar.db.projeto_votacao.repository.PautaRepository;
 import lombok.RequiredArgsConstructor;
@@ -25,5 +27,20 @@ public class PautaService {
         Pauta pauta = pautaRepository.findById(id)
                         .orElseThrow(() -> new AgendaNotFound("Pauta não encontrada"));
         return new PautaResponseDto(pauta);
+    }
+
+    public PautaResultadoDto resultadoDaPauta(Long id){
+        Pauta pauta = pautaRepository.findById(id)
+                        .orElseThrow(() -> new AgendaNotFound("Pauta não encontrada"));
+
+        long totalVotosSim = pauta.getVotos()
+                                    .stream().filter(voto -> voto.getTipoVoto() == TipoVoto.SIM)
+                                    .count();
+        long totalVotosNao = pauta.getVotos()
+                                    .stream().filter(voto -> voto.getTipoVoto() == TipoVoto.NAO)
+                                    .count();
+        long totalVotos = totalVotosSim + totalVotosNao;
+
+        return new PautaResultadoDto(pauta.getId(), pauta.getTitulo(), totalVotos, totalVotosSim, totalVotosNao);
     }
 }
