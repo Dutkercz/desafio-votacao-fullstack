@@ -8,6 +8,7 @@ import ar.db.projeto_votacao.exception.AgendaNotFound;
 import ar.db.projeto_votacao.exception.SessionAlreadyRegistered;
 import ar.db.projeto_votacao.repository.PautaRepository;
 import ar.db.projeto_votacao.repository.SessaoRepository;
+import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -26,11 +27,14 @@ public class SessaoService {
         Pauta pauta = pautaRepository.findById(requestDto.pautaId())
                         .orElseThrow(() -> new AgendaNotFound("Pauta não encontrada"));
 
+        //uma sessão de votação por pauta
         if (pauta.getSessao() != null){
             throw new SessionAlreadyRegistered("Já existe uma sessão para esta pauta");
         }
 
         Sessao sessao = new Sessao(pauta);
+
+        // por default 1 minuto por sessão
         int duracao = requestDto.duracao() != null && requestDto.duracao() > 0 ? requestDto.duracao() : 1;
         sessao.setFim(sessao.getInicio().plusMinutes(duracao));
 

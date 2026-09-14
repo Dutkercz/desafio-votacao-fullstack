@@ -13,14 +13,14 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 public class GlobalExceptionHandler {
 
     @ExceptionHandler({AssociateAlreadyRegisteredException.class, SessionAlreadyRegistered.class})
-    public ResponseEntity<ProblemDetail> associadoJaExisteException(RuntimeException e) {
+    public ResponseEntity<ProblemDetail> entidadeExistenteException(RuntimeException e) {
         ProblemDetail detail =  ProblemDetail
                 .forStatusAndDetail(HttpStatusCode.valueOf(409), e.getMessage());
         log.warn("Cadastro duplicado {}", e.getMessage());
         return ResponseEntity.status(HttpStatus.CONFLICT).body(detail);
     }
 
-    @ExceptionHandler({AgendaNotFound.class, AssociateNotExistException.class})
+    @ExceptionHandler({AgendaNotFound.class, AssociateNotExistException.class, CpfInvalidException.class})
     public ResponseEntity<ProblemDetail> entidadeNaoEncontradaException(RuntimeException e) {
         ProblemDetail detail =  ProblemDetail
                 .forStatusAndDetail(HttpStatusCode.valueOf(404), e.getMessage());
@@ -32,7 +32,7 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ProblemDetail> sessaoEncerrada(SessionAlreadyClosed e) {
         ProblemDetail detail =  ProblemDetail
                 .forStatusAndDetail(HttpStatusCode.valueOf(400), e.getMessage());
-        log.warn("Sessao encerrada {}", e.getMessage());
+        log.warn("Sessão encerrada {}", e.getMessage());
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(detail);
     }
 
