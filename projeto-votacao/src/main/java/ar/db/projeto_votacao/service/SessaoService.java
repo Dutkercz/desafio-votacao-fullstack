@@ -40,6 +40,6 @@ public class SessaoService {
 
         sessaoRepository.save(sessao);
         pauta.setSessao(sessao);
-        return new SessaoResponseDto(sessao);
+        return new SessaoResponseDto(sessao, duracao);
     }
 }
