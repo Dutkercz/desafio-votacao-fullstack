@@ -3,7 +3,7 @@ package ar.db.projeto_votacao.service;
 import ar.db.projeto_votacao.domain.Associado;
 import ar.db.projeto_votacao.dto.AssociadoRequestDto;
 import ar.db.projeto_votacao.dto.AssociadoResponseDto;
-import ar.db.projeto_votacao.exception.AssociateAlreadyRegisteredException;
+import ar.db.projeto_votacao.exception.AssociateRegisteredException;
 import ar.db.projeto_votacao.repository.AssociadoRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -19,7 +19,7 @@ public class AssociadoService {
     public AssociadoResponseDto cadastrarAssociado(AssociadoRequestDto requestDto) {
         boolean existeByCpf = associadoRepository.existsByCpf(requestDto.cpf());
         if (existeByCpf) {
-            throw new AssociateAlreadyRegisteredException("Associado já cadastrado");
+            throw new AssociateRegisteredException("Associado já cadastrado");
         }
 
         Associado associado = new Associado(requestDto.cpf());

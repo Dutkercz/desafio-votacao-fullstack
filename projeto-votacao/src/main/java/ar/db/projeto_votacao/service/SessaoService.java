@@ -4,11 +4,10 @@ import ar.db.projeto_votacao.domain.Pauta;
 import ar.db.projeto_votacao.domain.Sessao;
 import ar.db.projeto_votacao.dto.SessaoRequestDto;
 import ar.db.projeto_votacao.dto.SessaoResponseDto;
-import ar.db.projeto_votacao.exception.AgendaNotFound;
-import ar.db.projeto_votacao.exception.SessionAlreadyRegistered;
+import ar.db.projeto_votacao.exception.ResourceNotFoundException;
+import ar.db.projeto_votacao.exception.SessionRegisteredException;
 import ar.db.projeto_votacao.repository.PautaRepository;
 import ar.db.projeto_votacao.repository.SessaoRepository;
-import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -25,11 +24,11 @@ public class SessaoService {
     @Transactional
     public SessaoResponseDto iniciarSessao(SessaoRequestDto requestDto) {
         Pauta pauta = pautaRepository.findById(requestDto.pautaId())
-                        .orElseThrow(() -> new AgendaNotFound("Pauta não encontrada"));
+                        .orElseThrow(() -> new ResourceNotFoundException("Pauta não encontrada"));
 
         //uma sessão de votação por pauta
         if (pauta.getSessao() != null){
-            throw new SessionAlreadyRegistered("Já existe uma sessão para esta pauta");
+            throw new SessionRegisteredException("Já existe uma sessão para esta pauta");
         }
 
         Sessao sessao = new Sessao(pauta);

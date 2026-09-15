@@ -2,7 +2,10 @@ package ar.db.projeto_votacao.domain;
 
 import ar.db.projeto_votacao.domain.enums.TipoVoto;
 import jakarta.persistence.*;
-import lombok.*;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Entity
 @Getter
