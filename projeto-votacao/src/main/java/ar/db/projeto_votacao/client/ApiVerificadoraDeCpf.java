@@ -27,6 +27,4 @@ public class ApiVerificadoraDeCpf {
         }
     }
 
-    public record RespostaHttpSimulada(int statusCode, String status) {
-    }
 }
