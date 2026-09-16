@@ -27,10 +27,9 @@ public class SessaoService {
                         .orElseThrow(() -> new ResourceNotFoundException("Pauta não encontrada"));
 
         //uma sessão de votação por pauta
-        if (pauta.getSessao() != null){
+        if (sessaoRepository.existsByPautaId(pauta.getId())){
             throw new SessionRegisteredException("Já existe uma sessão para esta pauta");
         }
-
         Sessao sessao = new Sessao(pauta);
 
         // por default 1 minuto por sessão

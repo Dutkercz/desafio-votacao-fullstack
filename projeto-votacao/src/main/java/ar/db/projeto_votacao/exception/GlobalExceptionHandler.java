@@ -45,7 +45,7 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ProblemDetail> sessaoEncerrada(AssociateAlreadyVotedException e) {
         ProblemDetail detail = ProblemDetail.forStatusAndDetail(HttpStatusCode.valueOf(403),
                                                                 e.getMessage());
-        log.warn("Associado tentando registrar novo voto {}", e.getMessage());
+        log.warn("Associado tentando registrar voto duplicado {}", e.getMessage());
         return ResponseEntity.status(HttpStatus.FORBIDDEN).body(detail);
     }
 

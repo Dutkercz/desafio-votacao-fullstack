@@ -80,6 +80,7 @@ class SessaoServiceTest {
         pauta.setSessao(sessao);
         sessao.setPauta(pauta);
 
+        when(sessaoRepository.existsByPautaId(requestDto.pautaId())).thenReturn(Boolean.TRUE);
         when(pautaRepository.findById(requestDto.pautaId())).thenReturn(Optional.of(pauta));
 
         var result = assertThrows(SessionRegisteredException.class, () ->
