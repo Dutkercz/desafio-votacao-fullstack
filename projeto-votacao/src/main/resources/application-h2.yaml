@@ -1,0 +1,8 @@
+spring:
+  application:
+    name: projeto-votacao
+  datasource:
+    url: jdbc:h2:mem:db_projeto_votacao
+    username: sa
+    password:
+    driver-class-name: org.h2.Driver
