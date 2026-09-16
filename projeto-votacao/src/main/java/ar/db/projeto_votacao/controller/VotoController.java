@@ -9,6 +9,9 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.util.UriComponentsBuilder;
+
+import java.net.URI;
 
 @RestController
 @RequestMapping("/api/v1/votos")
@@ -18,8 +21,11 @@ public class VotoController {
     private final VotoService votoService;
 
     @PostMapping
-    public ResponseEntity<VotoResponseDto> registrarVoto(@RequestBody VotoRequestDto requestDto){
+    public ResponseEntity<VotoResponseDto> registrarVoto(@RequestBody VotoRequestDto requestDto,
+                                                         UriComponentsBuilder builder) {
         VotoResponseDto votoResponseDto = votoService.registrarVoto(requestDto);
-        return ResponseEntity.ok(votoResponseDto);
+        URI uri = builder.path("/api/v1/votos/{id}")
+                         .buildAndExpand(votoResponseDto.pauta()).toUri();
+        return ResponseEntity.created(uri).body(votoResponseDto);
     }
 }
