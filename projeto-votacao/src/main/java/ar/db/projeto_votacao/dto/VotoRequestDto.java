@@ -4,10 +4,10 @@ import ar.db.projeto_votacao.domain.enums.TipoVoto;
 import jakarta.validation.constraints.NotNull;
 
 public record VotoRequestDto(
-        @NotNull
+        @NotNull(message = "Informe o ID do associado")
         Long associadoId,
-        @NotNull
+        @NotNull(message = "Informe o ID da pauta")
         Long pautaId,
-        @NotNull
+        @NotNull(message = "O campo tipoVoto não pode estar em branco")
         TipoVoto tipoVoto) {
 }
