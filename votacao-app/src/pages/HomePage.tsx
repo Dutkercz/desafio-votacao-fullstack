@@ -42,11 +42,11 @@ const HomePage = () => {
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <div className="flex justify-between mb-2">
-            <div >
+          <div className="mb-2 grid grid-cols-1 gap-2 sm:grid-cols-3">
+            <div>
               <Dialog open={openPauta} onOpenChange={setOpenPauta}>
                 <DialogTrigger render={
-                  <Button variant="outline" onClick={(v) => setOpenPauta(!v)}>
+                  <Button className="w-full" variant="outline" onClick={(v) => setOpenPauta(!v)}>
                     Adicionar Pauta
                   </Button>}
                 />
@@ -56,14 +56,14 @@ const HomePage = () => {
             <div>
               <Dialog open={openCadastro} onOpenChange={setOpenCadastro}>
                 <DialogTrigger render={
-                  <Button variant="outline" onClick={(v) => setOpenCadastro(!v)}>
+                  <Button className="w-full" variant="outline" onClick={(v) => setOpenCadastro(!v)}>
                     Cadastrar Associado
                   </Button>} />
                 <RegisterAssociateDialog setOpen={setOpenCadastro} />
               </Dialog>
             </div>
             <div>
-              <Button variant="outline" onClick={handleClickResult}>
+              <Button className="w-full" variant="outline" onClick={handleClickResult}>
                 Resultados
               </Button>
             </div>
@@ -80,7 +80,9 @@ const HomePage = () => {
             ) : (
               <div>
                 <Card>
-                  <CardTitle>Não existem pautas a serem votadas</CardTitle>
+                  <CardTitle className="m-1 text-center">
+                    Não existem pautas a serem votadas
+                  </CardTitle>
                 </Card>
               </div>
             )}

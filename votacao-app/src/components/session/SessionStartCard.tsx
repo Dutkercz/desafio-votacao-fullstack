@@ -9,6 +9,7 @@ import { toast } from 'sonner'
 import { sessionService } from '../../services/sessionService'
 import type { BackendError } from '@/types/backendError'
 import { onError } from '@/utils/onError'
+import { Card, CardContent } from '../ui/card'
 
 type SessionStartCardProps = {
   agendaId: number
@@ -38,11 +39,11 @@ const SessionStartCard = ({ agendaId }: SessionStartCardProps) => {
     openSessionMutate.mutate({ pautaId: agendaId, duracao: duration })
   }
   return (
-    <div className="space-y-3">
-      <div className="flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
-        <div className="space-y-1">
+    <Card className='rounded-md border border-border/80 bg-muted/30'>
+      <CardContent className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
+        <div className="w-full sm:w-auto">
           <Label htmlFor="duration" className="text-xs font-medium uppercase tracking-[0.12em] text-muted-foreground">
-              Duração da sessão
+            Duração da sessão
           </Label>
           <Input
             id="duration"
@@ -63,8 +64,8 @@ const SessionStartCard = ({ agendaId }: SessionStartCardProps) => {
         >
           Iniciar Sessão
         </Button>
-      </div>
-    </div>
+      </CardContent>
+    </Card>
   )
 }
 

@@ -34,7 +34,7 @@ export const ResultPage = () => {
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <div>
+          <div className="flex justify-center">
             <Button variant="outline" onClick={handleHomeClick}>
               Voltar a lista de Pautas
             </Button>

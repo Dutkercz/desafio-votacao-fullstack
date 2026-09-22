@@ -11,6 +11,7 @@ import type { SessionResponseDto } from "@/types/session"
 import type { VoteRequest } from "@/types/vote"
 import { onError } from "@/utils/onError"
 import { voteService } from "../../services/voteService"
+import { Card, CardContent } from "../ui/card"
 
 type SessionVoteCardProps = {
   session: SessionResponseDto
@@ -47,33 +48,35 @@ const SessionVoteCard = ({ session, agendaId }: SessionVoteCardProps) => {
   }
 
   return (
-    <div key={session.id} className="flex items-center justify-between gap-3 rounded-md border border-border/80 bg-muted/30 px-3 py-2">
-      <div>
-        <p className="text-xs font-medium uppercase tracking-[0.12em] text-muted-foreground">
-          Sessão em andamento
-        </p>
-        <span><Countdown session={session} /></span>
+    <Card key={session.id} className="rounded-md border border-border/80 bg-muted/30">
+      <CardContent className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+        <div className="min-w-0">
+          <p className="text-xs font-medium uppercase tracking-[0.12em] text-muted-foreground">
+            Sessão em andamento
+          </p>
+          <span><Countdown session={session} /></span>
 
-      </div>
-      <div>
-        <RadioGroup value={voteOption}
-          onValueChange={setVoteOption} className="w-fit flex">
-          <div className="flex items-center gap-3">
-            <RadioGroupItem value="SIM" id="r1" />
-            <Label htmlFor="r1">SIM</Label>
-          </div>
-          <div className="flex items-center gap-3">
-            <RadioGroupItem value="NAO" id="r2" />
-            <Label htmlFor="r2">NÃO</Label>
-          </div>
-        </RadioGroup>
-      </div>
-      <Button type="button"
-        disabled={voteMutation.isPending || session?.status === "FINALIZADA"}
-        onClick={submitVote} size="sm" className="min-w-26">
-        {voteMutation.isPending ? "Votando" : "Votar"}
-      </Button>
-    </div>
+        </div>
+        <div className="flex w-full flex-col gap-3 sm:w-auto sm:flex-row sm:items-center">
+          <RadioGroup value={voteOption}
+            onValueChange={setVoteOption} className="flex w-full justify-between sm:w-fit sm:justify-start">
+            <div className="flex items-center gap-3">
+              <RadioGroupItem value="SIM" id="r1" />
+              <Label htmlFor="r1">SIM</Label>
+            </div>
+            <div className="flex items-center gap-3">
+              <RadioGroupItem value="NAO" id="r2" />
+              <Label htmlFor="r2">NÃO</Label>
+            </div>
+          </RadioGroup>
+          <Button type="button"
+            disabled={voteMutation.isPending || session?.status === "FINALIZADA"}
+            onClick={submitVote} size="sm" className="w-full sm:w-auto sm:min-w-26">
+            {voteMutation.isPending ? "Votando" : "Votar"}
+          </Button>
+        </div>
+      </CardContent>
+    </Card>
   )
 }
 
