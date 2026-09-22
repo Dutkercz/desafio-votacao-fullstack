@@ -10,6 +10,9 @@ import org.springframework.data.repository.query.Param;
 
 public interface PautaRepository extends JpaRepository<Pauta, Long> {
 
+    ///Retona o resultado páginado, ordenado de Pautas,
+    /// primeiro as com sessão em andamento. para aparecerem nas primeiras páginas
+    /// depois as que não possuem sessão inicializada e as finalizada não entram nesse retorno
     @Query("""
            SELECT P FROM Pauta P
            LEFT JOIN P.sessao s
@@ -23,6 +26,8 @@ public interface PautaRepository extends JpaRepository<Pauta, Long> {
            """)
     Page<Pauta> findNaoFinalizadosOrdenados(Pageable pageable);
 
+    ///Busca as pautas baseadas em PautaStatus recebida por parametro,
+    /// no projeto é usada pra trazer as pautas finalizadas de forma paginada
     @Query("""
            SELECT P FROM Pauta P
            WHERE P.status = :pautaStatus
