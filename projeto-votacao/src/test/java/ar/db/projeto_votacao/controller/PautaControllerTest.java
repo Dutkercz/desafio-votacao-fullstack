@@ -58,8 +58,8 @@ class PautaControllerTest {
         PautaRequestDto requestDto = new PautaRequestDto("Titulo da Pauta");
 
         mockMvc.perform(post("/api/v1/pautas")
-                                .contentType(MediaType.APPLICATION_JSON)
-                                .content(pautaRequestTester.write(requestDto).getJson()))
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(pautaRequestTester.write(requestDto).getJson()))
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.titulo").value("Titulo da Pauta"))
                 .andDo(print());
@@ -71,10 +71,10 @@ class PautaControllerTest {
         PautaRequestDto requestDto = new PautaRequestDto("");
 
         mockMvc.perform(post("/api/v1/pautas")
-                                .contentType(MediaType.APPLICATION_JSON)
-                                .content(pautaRequestTester.write(requestDto).getJson()))
-               .andExpect(status().isBadRequest())
-               .andDo(print());
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(pautaRequestTester.write(requestDto).getJson()))
+                .andExpect(status().isBadRequest())
+                .andDo(print());
         assertEquals(0, pautaRepository.count());
     }
 
@@ -82,7 +82,7 @@ class PautaControllerTest {
     void deveRetornarDtoResultadoDaPauta() throws Exception {
         Pauta pauta = pautaRepository.save(new Pauta("Titulo da Pauta"));
         Sessao sessao = new Sessao(pauta);
-        sessao.setFim(sessao.getInicio().plusMinutes(1L));
+        sessao.setFim(sessao.getInicio().plusSeconds(60L));
         pauta.setSessao(sessao);
 
         sessaoRepository.save(sessao);
@@ -106,6 +106,34 @@ class PautaControllerTest {
                 .andExpect(jsonPath("$.content[0].totalVotos").value(3))
                 .andExpect(jsonPath("$.content[0].totalVotosSim").value(2))
                 .andExpect(jsonPath("$.content[0].totalVotosNao").value(1))
+                .andDo(print());
+    }
+
+    @Test
+    void deveListarPautasNaoFinalizadas() {
+        Pauta pauta = pautaRepository.save(new Pauta("Pauta ativa"));
+
+        assertEquals(1, pautaRepository.count());
+        org.assertj.core.api.Assertions.assertThatCode(() -> mockMvc.perform(get("/api/v1/pautas"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.content").isArray())
+                .andExpect(jsonPath("$.content[0].id").value(pauta.getId()))
+                .andExpect(jsonPath("$.content[0].titulo").value("Pauta ativa")))
+                .doesNotThrowAnyException();
+    }
+
+    @Test
+    void deveListarResultadosDasPautasFinalizadas() throws Exception {
+        Pauta pauta = new Pauta("Pauta finalizada");
+        pauta.setStatus(PautaStatus.FINALIZADA);
+        pauta.setVotos(new java.util.ArrayList<>());
+        pautaRepository.save(pauta);
+
+        mockMvc.perform(get("/api/v1/pautas/resultados"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.content").isArray())
+                .andExpect(jsonPath("$.content[0].titulo").value("Pauta finalizada"))
+                .andExpect(jsonPath("$.content[0].totalVotos").value(0))
                 .andDo(print());
     }
 }

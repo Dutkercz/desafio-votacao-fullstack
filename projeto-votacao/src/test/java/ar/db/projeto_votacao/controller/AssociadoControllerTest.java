@@ -2,7 +2,6 @@ package ar.db.projeto_votacao.controller;
 
 import ar.db.projeto_votacao.dto.AssociadoRequestDto;
 import ar.db.projeto_votacao.repository.AssociadoRepository;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.json.AutoConfigureJsonTesters;
@@ -40,8 +39,8 @@ class AssociadoControllerTest {
         AssociadoRequestDto requestDto = new AssociadoRequestDto("12345678900");
 
         mockMvc.perform(post("/api/v1/associados")
-                                .contentType(MediaType.APPLICATION_JSON)
-                                .content(associadoRequestTester.write(requestDto).getJson()))
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(associadoRequestTester.write(requestDto).getJson()))
                 .andExpect(status().isCreated())
                 .andDo(print());
         assertEquals(1, associadoRepository.count(), "Deve ter 1 associado registrado");
@@ -49,14 +48,14 @@ class AssociadoControllerTest {
 
     @Test
     void deveLancarExceptionCpfForaDeFormatoEsperado() throws Exception {
-        //cpf com menos de 11 digitos
+        // cpf com menos de 11 digitos
         AssociadoRequestDto requestDto = new AssociadoRequestDto("123456789");
 
         mockMvc.perform(post("/api/v1/associados")
-                                .contentType(MediaType.APPLICATION_JSON)
-                                .content(associadoRequestTester.write(requestDto).getJson()))
-               .andExpect(status().isBadRequest())
-               .andDo(print());
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(associadoRequestTester.write(requestDto).getJson()))
+                .andExpect(status().isBadRequest())
+                .andDo(print());
         assertEquals(0, associadoRepository.count(), "Deve ter 1 associado registrado");
     }
 

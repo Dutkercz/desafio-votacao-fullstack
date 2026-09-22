@@ -5,6 +5,7 @@ import ar.db.projeto_votacao.client.RespostaHttpSimulada;
 import ar.db.projeto_votacao.domain.Associado;
 import ar.db.projeto_votacao.domain.Pauta;
 import ar.db.projeto_votacao.domain.Sessao;
+import ar.db.projeto_votacao.domain.Voto;
 import ar.db.projeto_votacao.domain.enums.SessaoStatus;
 import ar.db.projeto_votacao.domain.enums.TipoVoto;
 import ar.db.projeto_votacao.dto.VotoRequestDto;
@@ -24,7 +25,9 @@ import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDateTime;
+import java.time.Instant;
+import java.util.ArrayList;
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.when;
@@ -40,136 +43,168 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @Transactional
 class VotoControllerTest {
 
-    @Autowired
-    private MockMvc mockMvc;
+        @Autowired
+        private MockMvc mockMvc;
 
-    @Autowired
-    private PautaRepository pautaRepository;
-    @Autowired
-    private SessaoRepository sessaoRepository;
-    @Autowired
-    private AssociadoRepository associadoRepository;
-    @Autowired
-    private VotoRepository votoRepository;
+        @Autowired
+        private PautaRepository pautaRepository;
+        @Autowired
+        private SessaoRepository sessaoRepository;
+        @Autowired
+        private AssociadoRepository associadoRepository;
+        @Autowired
+        private VotoRepository votoRepository;
 
-    @MockitoBean
-    private ApiVerificadoraDeCpf verificadoraDeCpf;
+        @MockitoBean
+        private ApiVerificadoraDeCpf verificadoraDeCpf;
 
-    @Autowired
-    private JacksonTester<VotoRequestDto> votoRequestTester;
+        @Autowired
+        private JacksonTester<VotoRequestDto> votoRequestTester;
 
-    @Test
-    void deveRegistrarVotoComSucesso() throws Exception {
-        Pauta pauta = new Pauta("Titulo da Pauta");
-        pautaRepository.save(pauta);
+        @Test
+        void deveRegistrarVotoComSucesso() throws Exception {
+                Pauta pauta = new Pauta("Titulo da Pauta");
+                pautaRepository.save(pauta);
 
-        Sessao sessao = new Sessao(pauta);
-        sessao.setFim(LocalDateTime.now().plusMinutes(1));
-        pauta.setSessao(sessao);
-        sessaoRepository.save(sessao);
-        pautaRepository.save(pauta);
+                Sessao sessao = new Sessao(pauta);
+                sessao.setFim(Instant.now().plusSeconds(60L));
+                pauta.setSessao(sessao);
+                sessaoRepository.save(sessao);
+                pautaRepository.save(pauta);
 
-        Associado associado = new Associado("12345678900");
-        associadoRepository.save(associado);
+                Associado associado = new Associado("12345678900");
+                associadoRepository.save(associado);
 
-        VotoRequestDto requestDto = new VotoRequestDto(
-                associado.getId(), pauta.getId(), TipoVoto.SIM);
+                VotoRequestDto requestDto = new VotoRequestDto(
+                                associado.getId(), pauta.getId(), TipoVoto.SIM);
 
-        //preciso controlar o retorno da "API externa"(Fake) pra o teste nao ter chance de falhar
-        RespostaHttpSimulada httpResposta = new RespostaHttpSimulada(200, "ABLE_TO_VOTE");
-        when(verificadoraDeCpf.isCpfValido(associado.getCpf())).thenReturn(httpResposta);
+                // preciso controlar o retorno da "API externa"(Fake) pra o teste nao ter chance
+                // de falhar
+                RespostaHttpSimulada httpResposta = new RespostaHttpSimulada(200, "ABLE_TO_VOTE");
+                when(verificadoraDeCpf.isCpfValido(associado.getCpf())).thenReturn(httpResposta);
 
-        mockMvc.perform(post("/api/v1/votos")
+                mockMvc.perform(post("/api/v1/votos")
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .content(votoRequestTester.write(requestDto).getJson()))
-                .andExpect(status().isCreated())
-                .andExpect(jsonPath("$.pauta.id").value(pauta.getId()))
-                .andExpect(jsonPath("$.tipoVoto").value(TipoVoto.SIM.toString()))
-                .andDo(print());
-    }
+                                .andExpect(status().isCreated())
+                                .andExpect(jsonPath("$.pauta.id").value(pauta.getId()))
+                                .andExpect(jsonPath("$.tipoVoto").value(TipoVoto.SIM.toString()))
+                                .andDo(print());
+        }
 
-    @Test
-    void deveLancarExceptCpfInapto() throws Exception {
-        Pauta pauta = new Pauta("Titulo da Pauta");
-        pautaRepository.save(pauta);
+        @Test
+        void deveLancarExceptCpfInapto() throws Exception {
+                Pauta pauta = new Pauta("Titulo da Pauta");
+                pautaRepository.save(pauta);
 
-        Sessao sessao = new Sessao(pauta);
-        sessao.setFim(LocalDateTime.now().plusMinutes(1));
-        pauta.setSessao(sessao);
-        sessaoRepository.save(sessao);
-        pautaRepository.save(pauta);
+                Sessao sessao = new Sessao(pauta);
+                sessao.setFim(Instant.now().plusSeconds(60L));
+                pauta.setSessao(sessao);
+                sessaoRepository.save(sessao);
+                pautaRepository.save(pauta);
 
-        Associado associado = new Associado("12345678900");
-        associadoRepository.save(associado);
+                Associado associado = new Associado("12345678900");
+                associadoRepository.save(associado);
 
-        VotoRequestDto requestDto = new VotoRequestDto(
-                associado.getId(), pauta.getId(), TipoVoto.SIM);
+                VotoRequestDto requestDto = new VotoRequestDto(
+                                associado.getId(), pauta.getId(), TipoVoto.SIM);
 
-        RespostaHttpSimulada httpResposta = new RespostaHttpSimulada(404, "UNABLE_TO_VOTE");
-        when(verificadoraDeCpf.isCpfValido(associado.getCpf())).thenReturn(httpResposta);
+                RespostaHttpSimulada httpResposta = new RespostaHttpSimulada(404, "UNABLE_TO_VOTE");
+                when(verificadoraDeCpf.isCpfValido(associado.getCpf())).thenReturn(httpResposta);
 
-        mockMvc.perform(post("/api/v1/votos")
+                mockMvc.perform(post("/api/v1/votos")
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .content(votoRequestTester.write(requestDto).getJson()))
-                .andExpect(status().isNotFound())
-                .andDo(print());
-    }
+                                .andExpect(status().isNotFound())
+                                .andDo(print());
+        }
 
-    @Test
-    void deveLancarExceptSessaoNaoIniciada() throws Exception {
-        Pauta pauta = new Pauta("Titulo da Pauta");
-        pautaRepository.save(pauta);
+        @Test
+        void deveLancarExceptSessaoNaoIniciada() throws Exception {
+                Pauta pauta = new Pauta("Titulo da Pauta");
+                pautaRepository.save(pauta);
 
-        Associado associado = new Associado("12345678900");
-        associadoRepository.save(associado);
+                Associado associado = new Associado("12345678900");
+                associadoRepository.save(associado);
 
-        VotoRequestDto requestDto = new VotoRequestDto(
-                associado.getId(), pauta.getId(), TipoVoto.SIM);
+                VotoRequestDto requestDto = new VotoRequestDto(
+                                associado.getId(), pauta.getId(), TipoVoto.SIM);
 
-        RespostaHttpSimulada httpResposta = new RespostaHttpSimulada(200, "ABLE_TO_VOTE");
-        when(verificadoraDeCpf.isCpfValido(associado.getCpf())).thenReturn(httpResposta);
+                RespostaHttpSimulada httpResposta = new RespostaHttpSimulada(200, "ABLE_TO_VOTE");
+                when(verificadoraDeCpf.isCpfValido(associado.getCpf())).thenReturn(httpResposta);
 
-        String result = mockMvc.perform(post("/api/v1/votos")
-                                                         .contentType(MediaType.APPLICATION_JSON).
-                                                        content(
+                String result = mockMvc.perform(post("/api/v1/votos")
+                                .contentType(MediaType.APPLICATION_JSON).content(
                                                 votoRequestTester.write(requestDto).getJson()))
-                                        .andExpect(status().isNotFound())
-                                        .andDo(print())
-                                        .andReturn().getResponse().getContentAsString();
-        assertTrue(result.contains("Sessão ainda não foi iniciada"));
-    }
+                                .andExpect(status().isNotFound())
+                                .andDo(print())
+                                .andReturn().getResponse().getContentAsString();
+                assertTrue(result.contains("Sessão ainda não foi iniciada"));
+        }
 
-    @Test
-    void deveLancarExceptSessaoFinalizada() throws Exception {
-        Pauta pauta = new Pauta("Titulo da Pauta");
-        pautaRepository.save(pauta);
+        @Test
+        void deveLancarExceptSessaoFinalizada() throws Exception {
+                Pauta pauta = new Pauta("Titulo da Pauta");
+                pautaRepository.save(pauta);
 
-        Sessao sessao = new Sessao(pauta);
-        sessao.setFim(LocalDateTime.of(1995, 8, 10 , 21 , 30));
-        sessao.setStatus(SessaoStatus.FINALIZADA);
-        pauta.setSessao(sessao);
-        sessaoRepository.save(sessao);
-        pautaRepository.save(pauta);
+                Sessao sessao = new Sessao(pauta);
+                sessao.setFim(Instant.parse("2000-10-15T00:00:00Z"));
+                sessao.setStatus(SessaoStatus.FINALIZADA);
+                pauta.setSessao(sessao);
+                sessaoRepository.save(sessao);
+                pautaRepository.save(pauta);
 
-        Associado associado = new Associado("12345678900");
-        associadoRepository.save(associado);
+                Associado associado = new Associado("12345678900");
+                associadoRepository.save(associado);
 
-        VotoRequestDto requestDto = new VotoRequestDto(
-                associado.getId(), pauta.getId(), TipoVoto.SIM);
+                VotoRequestDto requestDto = new VotoRequestDto(
+                                associado.getId(), pauta.getId(), TipoVoto.SIM);
 
-        RespostaHttpSimulada httpResposta = new RespostaHttpSimulada(200, "ABLE_TO_VOTE");
-        when(verificadoraDeCpf.isCpfValido(associado.getCpf())).thenReturn(httpResposta);
+                RespostaHttpSimulada httpResposta = new RespostaHttpSimulada(200, "ABLE_TO_VOTE");
+                when(verificadoraDeCpf.isCpfValido(associado.getCpf())).thenReturn(httpResposta);
 
-
-        String result = mockMvc.perform(post("/api/v1/votos")
-                                                         .contentType(MediaType.APPLICATION_JSON).
-                                                        content(
+                String result = mockMvc.perform(post("/api/v1/votos")
+                                .contentType(MediaType.APPLICATION_JSON).content(
                                                 votoRequestTester.write(requestDto).getJson()))
-                                        .andExpect(status().isBadRequest())
-                                        .andDo(print())
-                                        .andReturn().getResponse().getContentAsString();
-        assertTrue(result.contains("A sessão já foi finalizada"));
-    }
+                                .andExpect(status().isBadRequest())
+                                .andDo(print())
+                                .andReturn().getResponse().getContentAsString();
+                assertTrue(result.contains("A sessão já foi finalizada"));
+        }
 
+        @Test
+        void deveLancarExceptAssociadoJaVotou() throws Exception {
+                Pauta pauta = new Pauta("Titulo da Pauta");
+                pautaRepository.save(pauta);
+
+                Sessao sessao = new Sessao(pauta);
+                sessao.setFim(Instant.now().plusSeconds(60L));
+                pauta.setSessao(sessao);
+                sessaoRepository.save(sessao);
+
+                Associado associado = new Associado("12345678900");
+                associadoRepository.save(associado);
+
+                Voto votoExistente = new Voto(associado, pauta, TipoVoto.SIM);
+                votoRepository.save(votoExistente);
+
+                pauta.setVotos(new ArrayList<>(List.of(votoExistente)));
+                pautaRepository.save(pauta);
+
+                VotoRequestDto requestDto = new VotoRequestDto(
+                                associado.getId(), pauta.getId(), TipoVoto.NAO);
+
+                RespostaHttpSimulada httpResposta = new RespostaHttpSimulada(200, "ABLE_TO_VOTE");
+                when(verificadoraDeCpf.isCpfValido(associado.getCpf())).thenReturn(httpResposta);
+
+                String result = mockMvc.perform(post("/api/v1/votos")
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(votoRequestTester.write(requestDto).getJson()))
+                                .andExpect(status().isForbidden())
+                                .andDo(print())
+                                .andReturn().getResponse().getContentAsString();
+
+                assertTrue(result.contains("Associado já participou da votação"));
+        }
 
 }

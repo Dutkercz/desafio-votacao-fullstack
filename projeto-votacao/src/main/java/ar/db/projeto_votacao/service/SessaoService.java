@@ -36,7 +36,7 @@ public class SessaoService {
 
         // por default 1 minuto por sessão
         int duracao = requestDto.duracao() != null && requestDto.duracao() > 0 ? requestDto.duracao() : 1;
-        sessao.setFim(sessao.getInicio().plusMinutes(duracao));
+        sessao.setFim(sessao.getInicio().plusSeconds(duracao * 60L));
         sessao.setStatus(SessaoStatus.EM_ANDAMENTO);
         pauta.setStatus(PautaStatus.EM_VOTACAO);
 

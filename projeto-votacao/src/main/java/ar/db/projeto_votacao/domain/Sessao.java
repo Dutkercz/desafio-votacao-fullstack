@@ -7,7 +7,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.time.LocalDateTime;
+import java.time.Instant;
 
 @Entity
 @Getter
@@ -23,11 +23,13 @@ public class Sessao {
     @OneToOne
     private Pauta pauta;
 
+    //Alterado pra Instant, porque é usado como base no contador regressivo do front,
+    //com instant eu não dependo de timezones diferentes pra calcular o contador, o que poderia, e gerou bugs
     @Column(updatable = false, nullable = false)
-    private LocalDateTime inicio = LocalDateTime.now();
+    private Instant inicio = Instant.now();
 
     @Column(updatable = false, nullable = false)
-    private LocalDateTime fim;
+    private Instant fim;
 
     @Enumerated(EnumType.STRING)
     private SessaoStatus status = SessaoStatus.EM_ANDAMENTO;

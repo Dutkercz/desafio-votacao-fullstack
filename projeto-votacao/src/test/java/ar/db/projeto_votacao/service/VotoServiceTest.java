@@ -22,14 +22,13 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.time.LocalDateTime;
+import java.time.Instant;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.when;
 
 @Slf4j
 @ExtendWith(MockitoExtension.class)
@@ -64,7 +63,7 @@ class VotoServiceTest {
         pauta.setId(pautaId);
 
         Sessao sessao = new Sessao(pauta);
-        sessao.setFim(sessao.getInicio().plusMinutes(1));
+        sessao.setFim(sessao.getInicio().plusSeconds(60L));
         pauta.setSessao(sessao);
 
         Voto voto = new Voto(associado, pauta, tipoVoto);
@@ -128,7 +127,7 @@ class VotoServiceTest {
         pauta.setId(pautaId);
 
         Sessao sessao = new Sessao(pauta);
-        sessao.setFim(LocalDateTime.of(1992, 8, 10, 21, 30));
+        sessao.setFim(Instant.parse("2000-10-15T00:00:00Z"));
         sessao.setStatus(SessaoStatus.FINALIZADA);
         pauta.setSessao(sessao);
 
@@ -154,7 +153,7 @@ class VotoServiceTest {
         pauta.setId(pautaId);
 
         Sessao sessao = new Sessao(pauta);
-        sessao.setFim(sessao.getInicio().plusMinutes(1));
+        sessao.setFim(sessao.getInicio().plusSeconds(60L));
         pauta.setSessao(sessao);
 
         VotoRequestDto requestDto = new VotoRequestDto(associadoId, pautaId, tipoVoto);
@@ -183,7 +182,7 @@ class VotoServiceTest {
         pauta.setId(pautaId);
 
         Sessao sessao = new Sessao(pauta);
-        sessao.setFim(sessao.getInicio().plusMinutes(1));
+        sessao.setFim(sessao.getInicio().plusSeconds(60L));
         pauta.setSessao(sessao);
 
         Voto voto = new Voto(associado, pauta, tipoVoto);
@@ -216,7 +215,7 @@ class VotoServiceTest {
         pauta.setId(pautaId);
 
         Sessao sessao = new Sessao(pauta);
-        sessao.setFim(sessao.getInicio().plusMinutes(1));
+        sessao.setFim(sessao.getInicio().plusSeconds(60L));
         pauta.setSessao(sessao);
 
         VotoRequestDto requestDto = new VotoRequestDto(associadoId, pautaId, tipoVoto);

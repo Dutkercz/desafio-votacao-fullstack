@@ -1,6 +1,5 @@
 package ar.db.projeto_votacao.controller;
 
-import ar.db.projeto_votacao.dto.SessaoResponseDto;
 import ar.db.projeto_votacao.dto.VotoRequestDto;
 import ar.db.projeto_votacao.dto.VotoResponseDto;
 import ar.db.projeto_votacao.service.VotoService;
