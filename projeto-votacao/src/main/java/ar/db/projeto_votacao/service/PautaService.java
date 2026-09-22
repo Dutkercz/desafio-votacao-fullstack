@@ -47,20 +47,23 @@ public class PautaService {
                               .map(pauta -> resultadoDaPauta(pauta.getId()));
     }
 
-    public Page<PautaCardDto> pautas(Pageable pageable) {
-        return  pautaRepository.findNaoFinalizadosOrdenados(pageable).map(p -> {
-            var sessao = p.getSessao();
-            if(sessao == null){
-                return new PautaCardDto(p.getId(), p.getTitulo(),null, p.getStatus());
-            }
-            return new PautaCardDto(p, new SessaoResponseDto(sessao));
-        });
+    public Page<PautaCardDto> listarPautasPaginada(Pageable pageable) {
+        return  pautaRepository.findNaoFinalizadosOrdenados(pageable).map(this::convertParaPautaCardDto);
+    }
+
+    ///Private > Méthodos auxiliares do service
+    private PautaCardDto convertParaPautaCardDto(Pauta p) {
+        var sessao = p.getSessao();
+        if(sessao == null){
+            return new PautaCardDto(p.getId(), p.getTitulo(), null, p.getStatus());
+        }
+        return new PautaCardDto(p, new SessaoResponseDto(sessao));
     }
 
     private Long contarVotos(List<Voto> votos, TipoVoto tipoVoto){
         if(votos == null) return null;
-        if(votos.isEmpty()) return 0L;
-        return votos.stream().filter(voto -> voto.getTipoVoto() == tipoVoto)
-                        .count();
+        return votos.stream()
+                    .filter(voto -> voto.getTipoVoto() == tipoVoto)
+                    .count();
     }
 }

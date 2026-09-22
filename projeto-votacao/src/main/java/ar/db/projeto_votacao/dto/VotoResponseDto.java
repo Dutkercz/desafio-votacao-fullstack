@@ -9,6 +9,7 @@ public record VotoResponseDto(
         TipoVoto tipoVoto
 ) {
     public VotoResponseDto(Voto voto) {
-        this(voto.getId(), new PautaResponseDto(voto.getPauta()), voto.getTipoVoto());
+        this(voto.getId(),
+             new PautaResponseDto(voto.getPauta()), voto.getTipoVoto());
     }
 }
