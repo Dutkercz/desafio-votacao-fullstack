@@ -4,6 +4,7 @@ import ar.db.projeto_votacao.domain.Associado;
 import ar.db.projeto_votacao.domain.Pauta;
 import ar.db.projeto_votacao.domain.Sessao;
 import ar.db.projeto_votacao.domain.Voto;
+import ar.db.projeto_votacao.domain.enums.PautaStatus;
 import ar.db.projeto_votacao.domain.enums.TipoVoto;
 import ar.db.projeto_votacao.dto.PautaRequestDto;
 import ar.db.projeto_votacao.repository.AssociadoRepository;
@@ -96,13 +97,15 @@ class PautaControllerTest {
         List<Voto> votos = List.of(votoUm, votoDois, votoTres);
         votoRepository.saveAll(votos);
         pauta.setVotos(votos);
+        pauta.setStatus(PautaStatus.FINALIZADA);
 
-        mockMvc.perform(get("/api/v1/pautas/resultado/{id}", pauta.getId()))
+        mockMvc.perform(get("/api/v1/pautas/resultados", pauta.getId()))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.titulo").value("Titulo da Pauta"))
-                .andExpect(jsonPath("$.totalVotos").value(3))
-                .andExpect(jsonPath("$.totalVotosSim").value(2))
-                .andExpect(jsonPath("$.totalVotosNao").value(1))
+                .andExpect(jsonPath("$.content").isArray())
+                .andExpect(jsonPath("$.content[0].titulo").value("Titulo da Pauta"))
+                .andExpect(jsonPath("$.content[0].totalVotos").value(3))
+                .andExpect(jsonPath("$.content[0].totalVotosSim").value(2))
+                .andExpect(jsonPath("$.content[0].totalVotosNao").value(1))
                 .andDo(print());
     }
 }

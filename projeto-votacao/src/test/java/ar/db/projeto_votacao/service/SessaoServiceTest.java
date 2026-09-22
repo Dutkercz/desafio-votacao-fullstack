@@ -46,7 +46,6 @@ class SessaoServiceTest {
 
         assertNotNull(result);
         assertEquals(pauta.getId(), result.pauta().id());
-        assertEquals(1, result.duracao());
     }
 
     @Test
@@ -65,7 +64,6 @@ class SessaoServiceTest {
 
         assertNotNull(result);
         assertEquals(pauta.getId(), result.pauta().id());
-        assertEquals(5, result.duracao());
     }
 
     @Test

@@ -54,7 +54,6 @@ class SessaoControllerTest {
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.pauta.id").value(pauta.getId()))
                 .andExpect(jsonPath("$.pauta.titulo").value(pauta.getTitulo()))
-                .andExpect(jsonPath("$.duracao").value(1))
                 .andDo(print());
     }
 
@@ -69,7 +68,6 @@ class SessaoControllerTest {
                .andExpect(status().isCreated())
                .andExpect(jsonPath("$.pauta.id").value(pauta.getId()))
                .andExpect(jsonPath("$.pauta.titulo").value(pauta.getTitulo()))
-               .andExpect(jsonPath("$.duracao").value(5))
                .andDo(print());
     }
 

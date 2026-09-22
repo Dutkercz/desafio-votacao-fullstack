@@ -5,6 +5,7 @@ import ar.db.projeto_votacao.client.RespostaHttpSimulada;
 import ar.db.projeto_votacao.domain.Associado;
 import ar.db.projeto_votacao.domain.Pauta;
 import ar.db.projeto_votacao.domain.Sessao;
+import ar.db.projeto_votacao.domain.enums.SessaoStatus;
 import ar.db.projeto_votacao.domain.enums.TipoVoto;
 import ar.db.projeto_votacao.dto.VotoRequestDto;
 import ar.db.projeto_votacao.repository.AssociadoRepository;
@@ -145,6 +146,7 @@ class VotoControllerTest {
 
         Sessao sessao = new Sessao(pauta);
         sessao.setFim(LocalDateTime.of(1995, 8, 10 , 21 , 30));
+        sessao.setStatus(SessaoStatus.FINALIZADA);
         pauta.setSessao(sessao);
         sessaoRepository.save(sessao);
         pautaRepository.save(pauta);
