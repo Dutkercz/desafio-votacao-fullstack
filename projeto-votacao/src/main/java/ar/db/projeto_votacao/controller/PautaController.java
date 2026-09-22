@@ -1,11 +1,14 @@
 package ar.db.projeto_votacao.controller;
 
+import ar.db.projeto_votacao.dto.PautaCardDto;
 import ar.db.projeto_votacao.dto.PautaRequestDto;
 import ar.db.projeto_votacao.dto.PautaResponseDto;
 import ar.db.projeto_votacao.dto.PautaResultadoDto;
 import ar.db.projeto_votacao.service.PautaService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponentsBuilder;
@@ -28,8 +31,13 @@ public class PautaController {
         return ResponseEntity.created(uri).body(responseDto);
     }
 
-    @GetMapping("/resultado/{id}")
-    public ResponseEntity<PautaResultadoDto> resultadoPauta(@PathVariable Long id) {
-        return ResponseEntity.ok(pautaService.resultadoDaPauta(id));
+    @GetMapping
+    public ResponseEntity<Page<PautaCardDto>> pautasNaoVotadas(Pageable pageable){
+        return ResponseEntity.ok(pautaService.pautas(pageable));
+    }
+
+    @GetMapping("/resultados")
+    public ResponseEntity<Page<PautaResultadoDto>> resultadoPauta(Pageable pageable) {
+        return ResponseEntity.ok(pautaService.resultadoUltimasPautas(pageable));
     }
 }

@@ -54,8 +54,8 @@ public class GlobalExceptionHandler {
         Map<String, String> errors = new HashMap<>();
         errors.put("timestamp", LocalDateTime.now().toString());
 
-        e.getFieldErrors().forEach((error) -> {
-            errors.put(error.getField(), error.getDefaultMessage());
+        e.getFieldErrors().forEach(error -> {
+            errors.put("detail", error.getDefaultMessage());
         });
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errors);
     }

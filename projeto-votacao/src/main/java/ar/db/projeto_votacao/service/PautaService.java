@@ -1,15 +1,19 @@
 package ar.db.projeto_votacao.service;
 
 import ar.db.projeto_votacao.domain.Pauta;
+import ar.db.projeto_votacao.domain.Voto;
+import ar.db.projeto_votacao.domain.enums.PautaStatus;
 import ar.db.projeto_votacao.domain.enums.TipoVoto;
-import ar.db.projeto_votacao.dto.PautaRequestDto;
-import ar.db.projeto_votacao.dto.PautaResponseDto;
-import ar.db.projeto_votacao.dto.PautaResultadoDto;
+import ar.db.projeto_votacao.dto.*;
 import ar.db.projeto_votacao.exception.ResourceNotFoundException;
 import ar.db.projeto_votacao.repository.PautaRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -32,15 +36,31 @@ public class PautaService {
     public PautaResultadoDto resultadoDaPauta(Long id){
         Pauta pauta = pautaRepository.findById(id)
                         .orElseThrow(() -> new ResourceNotFoundException("Pauta não encontrada"));
-
-        long totalVotosSim = pauta.getVotos()
-                                    .stream().filter(voto -> voto.getTipoVoto() == TipoVoto.SIM)
-                                    .count();
-        long totalVotosNao = pauta.getVotos()
-                                    .stream().filter(voto -> voto.getTipoVoto() == TipoVoto.NAO)
-                                    .count();
+        long totalVotosSim = contarVotos( pauta.getVotos(),TipoVoto.SIM);
+        long totalVotosNao = contarVotos(pauta.getVotos(), TipoVoto.NAO);
         long totalVotos = totalVotosSim + totalVotosNao;
-
         return new PautaResultadoDto(pauta.getId(), pauta.getTitulo(), totalVotos, totalVotosSim, totalVotosNao);
+    }
+
+    public Page<PautaResultadoDto> resultadoUltimasPautas(Pageable pageable){
+        return pautaRepository.findPorStatus(PautaStatus.FINALIZADA, pageable)
+                              .map(pauta -> resultadoDaPauta(pauta.getId()));
+    }
+
+    public Page<PautaCardDto> pautas(Pageable pageable) {
+        return  pautaRepository.findNaoFinalizadosOrdenados(pageable).map(p -> {
+            var sessao = p.getSessao();
+            if(sessao == null){
+                return new PautaCardDto(p.getId(), p.getTitulo(),null, p.getStatus());
+            }
+            return new PautaCardDto(p, new SessaoResponseDto(sessao));
+        });
+    }
+
+    private Long contarVotos(List<Voto> votos, TipoVoto tipoVoto){
+        if(votos == null) return null;
+        if(votos.isEmpty()) return 0L;
+        return votos.stream().filter(voto -> voto.getTipoVoto() == tipoVoto)
+                        .count();
     }
 }

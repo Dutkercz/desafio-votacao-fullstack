@@ -2,6 +2,8 @@ package ar.db.projeto_votacao.service;
 
 import ar.db.projeto_votacao.domain.Pauta;
 import ar.db.projeto_votacao.domain.Sessao;
+import ar.db.projeto_votacao.domain.enums.PautaStatus;
+import ar.db.projeto_votacao.domain.enums.SessaoStatus;
 import ar.db.projeto_votacao.dto.SessaoRequestDto;
 import ar.db.projeto_votacao.dto.SessaoResponseDto;
 import ar.db.projeto_votacao.exception.ResourceNotFoundException;
@@ -35,9 +37,20 @@ public class SessaoService {
         // por default 1 minuto por sessão
         int duracao = requestDto.duracao() != null && requestDto.duracao() > 0 ? requestDto.duracao() : 1;
         sessao.setFim(sessao.getInicio().plusMinutes(duracao));
+        sessao.setStatus(SessaoStatus.EM_ANDAMENTO);
+        pauta.setStatus(PautaStatus.EM_VOTACAO);
 
         sessaoRepository.save(sessao);
         pauta.setSessao(sessao);
-        return new SessaoResponseDto(sessao, duracao);
+        return new SessaoResponseDto(sessao);
+    }
+
+    @Transactional
+    public SessaoResponseDto finalizarSessao(Long id) {
+        Sessao sessao = sessaoRepository.findById(id).orElseThrow(() ->
+                new ResourceNotFoundException("Sessão não encontrada"));
+        sessao.setStatus(SessaoStatus.FINALIZADA);
+        sessao.getPauta().setStatus(PautaStatus.FINALIZADA);
+        return new SessaoResponseDto(sessao);
     }
 }

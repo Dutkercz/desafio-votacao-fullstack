@@ -16,6 +16,7 @@ import ar.db.projeto_votacao.repository.VotoRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Slf4j
 @Service
@@ -27,6 +28,7 @@ public class VotoService {
     private final AssociadoRepository associadoRepository;
     private final ApiVerificadoraDeCpf apiVerificadoraDeCpf;
 
+    @Transactional
     public VotoResponseDto registrarVoto(VotoRequestDto requestDto) {
         Pauta pauta = pautaRepository.findById(requestDto.pautaId())
                         .orElseThrow(() -> new ResourceNotFoundException("Pauta não encontrada"));
@@ -35,7 +37,7 @@ public class VotoService {
         if (sessao == null) {
             throw new ResourceNotFoundException("Sessão ainda não foi iniciada");
         }
-        if(sessao.estaEncerrada()){
+        if(sessao.getStatus().isEncerrada()){
             throw new SessionClosedException("A sessão já foi finalizada");
         }
 
