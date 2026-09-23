@@ -11,6 +11,7 @@ import lombok.Setter;
 @Setter
 @EqualsAndHashCode(of = "id")
 @NoArgsConstructor
+@Table(name = "tb_associados")
 public class Associado {
 
     @Id

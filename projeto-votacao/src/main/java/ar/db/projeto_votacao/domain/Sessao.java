@@ -14,6 +14,7 @@ import java.time.Instant;
 @Setter
 @NoArgsConstructor
 @EqualsAndHashCode(of = "id")
+@Table(name = "tb_sessoes")
 public class Sessao {
 
     @Id

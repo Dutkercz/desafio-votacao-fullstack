@@ -16,6 +16,7 @@ import java.util.List;
 @Setter
 @EqualsAndHashCode(of = "id")
 @NoArgsConstructor
+@Table(name = "tb_pautas")
 public class Pauta {
 
     @Id

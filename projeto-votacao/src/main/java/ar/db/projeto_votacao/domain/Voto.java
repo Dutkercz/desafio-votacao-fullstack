@@ -12,6 +12,7 @@ import lombok.Setter;
 @Setter
 @EqualsAndHashCode(of = "id")
 @NoArgsConstructor
+@Table(name = "tb_votos")
 public class Voto {
 
     @Id

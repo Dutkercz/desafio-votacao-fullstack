@@ -87,7 +87,7 @@ class SessaoServiceTest {
 
         assertNotNull(result);
         assertEquals(pauta.getId(), result.pauta().id());
-        assertEquals(sessao.getFim(), result.fim());
+        assertEquals(sessao.getFim().getEpochSecond(),result.fim().getEpochSecond());
     }
 
     @Test

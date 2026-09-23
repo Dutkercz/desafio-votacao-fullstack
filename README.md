@@ -1,86 +1,108 @@
-# Votação
+# Sistema de Votação
 
-## Objetivo
+Aplicação full stack para gerenciamento de pautas e sessões de votação. O sistema permite cadastrar associados, criar pautas, abrir uma sessão de votação, registrar votos e consultar os resultados das pautas finalizadas.
 
-No cooperativismo, cada associado possui um voto e as decisões são tomadas em assembleias, por votação. Imagine que você deve criar uma solução we para gerenciar e participar dessas sessões de votação.
-Essa solução deve ser executada na nuvem e promover as seguintes funcionalidades através de uma API REST / Front:
+## Visão geral
 
-- Cadastrar uma nova pauta
-- Abrir uma sessão de votação em uma pauta (a sessão de votação deve ficar aberta por
-  um tempo determinado na chamada de abertura ou 1 minuto por default)
-- Receber votos dos associados em pautas (os votos são apenas 'Sim'/'Não'. Cada associado
-  é identificado por um id único e pode votar apenas uma vez por pauta)
-- Contabilizar os votos e dar o resultado da votação na pauta
+O projeto é dividido em três serviços:
 
-Para fins de exercício, a segurança das interfaces pode ser abstraída e qualquer chamada para as interfaces pode ser considerada como autorizada. A solução deve ser construída em java com Spring-boot e Angular/React conforme orientação, mas os frameworks e bibliotecas são de livre escolha (desde que não infrinja direitos de uso).
+- **Frontend**: aplicação React + TypeScript construída com Vite e servida pelo Nginx.
+- **API**: aplicação Spring Boot com Java 21, Spring Data JPA, validação, Flyway e documentação OpenAPI.
+- **Banco de dados**: MySQL 8.
 
-É importante que as pautas e os votos sejam persistidos e que não sejam perdidos com o restart da aplicação.
+## Requisitos
 
-## Como proceder
+Para executar com Docker, instale:
 
-Por favor, realize o FORK desse repositório e implemente sua solução no FORK em seu repositório GItHub, ao final, notifique da conclusão para que possamos analisar o código implementado.
+- Docker Desktop com Docker Compose habilitado.
+- Git, caso o projeto ainda não esteja disponível localmente.
 
-Lembre de deixar todas as orientações necessárias para executar o seu código.
+Não é necessário instalar Java, Maven, Node.js ou MySQL para executar a aplicação pelo Docker Compose.
 
-### Tarefas bônus
+## Executando com Docker (Prefira este método)
 
-- Tarefa Bônus 1 - Integração com sistemas externos
-  - Criar uma Facade/Client Fake que retorna aleátoriamente se um CPF recebido é válido ou não.
-  - Caso o CPF seja inválido, a API retornará o HTTP Status 404 (Not found). Você pode usar geradores de CPF para gerar CPFs válidos
-  - Caso o CPF seja válido, a API retornará se o usuário pode (ABLE_TO_VOTE) ou não pode (UNABLE_TO_VOTE) executar a operação. Essa operação retorna resultados aleatórios, portanto um mesmo CPF pode funcionar em um teste e não funcionar no outro.
+Na raiz do projeto, onde está o arquivo `docker-compose.yml`, execute:
 
-```
-// CPF Ok para votar
-{
-    "status": "ABLE_TO_VOTE
-}
-// CPF Nao Ok para votar - retornar 404 no client tb
-{
-    "status": "UNABLE_TO_VOTE
-}
+```bash
+docker compose up --build
 ```
 
-Exemplos de retorno do serviço
+Para executar em segundo plano:
 
-### Tarefa Bônus 2 - Performance
+```bash
+docker compose up --build -d
+```
 
-- Imagine que sua aplicação possa ser usada em cenários que existam centenas de
-  milhares de votos. Ela deve se comportar de maneira performática nesses
-  cenários
-- Testes de performance são uma boa maneira de garantir e observar como sua
-  aplicação se comporta
+O primeiro build pode levar alguns minutos porque compila a API e instala as dependências do frontend. Quando os containers estiverem prontos, acesse:
 
-### Tarefa Bônus 3 - Versionamento da API
+- **Aplicação web**: http://localhost:3000
+- **API**: http://localhost:8080
+- **Swagger UI**: http://localhost:8080/swagger-ui/index.html
+- **MySQL**: `localhost:3307`
 
-○ Como você versionaria a API da sua aplicação? Que estratégia usar?
+Para parar e remover os containers:
 
-## O que será analisado
+```bash
+docker compose down
+```
 
-- Simplicidade no design da solução (evitar over engineering)
-- Organização do código
-- Arquitetura do projeto
-- Boas práticas de programação (manutenibilidade, legibilidade etc)
-- Possíveis bugs
-- Tratamento de erros e exceções
-- Explicação breve do porquê das escolhas tomadas durante o desenvolvimento da solução
-- Uso de testes automatizados e ferramentas de qualidade
-- Limpeza do código
-- Documentação do código e da API
-- Logs da aplicação
-- Mensagens e organização dos commits
-- Testes
-- Layout responsivo
+O Compose atual não configura volume para o MySQL. Portanto, remover o container do banco com `docker compose down` também remove os dados armazenados nele.
 
-## Dicas
+Os contratos completos, parâmetros e modelos de request/response estão disponíveis no Swagger UI.
 
-- Teste bem sua solução, evite bugs
+## Executando sem Docker
 
-  Observações importantes
-- Não inicie o teste sem sanar todas as dúvidas
-- Iremos executar a aplicação para testá-la, cuide com qualquer dependência externa e
-  deixe claro caso haja instruções especiais para execução do mesmo
-  Classificação da informação: Uso Interno
+### API
 
+Requer Java 21 e Maven. Entre na pasta da API e execute:
 
+```bash
+cd projeto-votacao
+./mvnw spring-boot:run
+```
 
-# desafio-votacao
+No Windows, use:
+
+```powershell
+cd projeto-votacao
+.\mvnw.cmd spring-boot:run
+```
+
+Nesse modo, a configuração padrão aponta para um MySQL em `localhost:3306`. A senha pode ser informada pela variável `MYSQL_PASSWORD`.
+
+Para executar os testes da API:
+
+```powershell
+.\mvnw.cmd test
+```
+
+### Frontend
+
+Requer Node.js e npm. Em outro terminal:
+
+```bash
+cd votacao-app
+npm install
+npm run dev
+```
+
+O Vite disponibiliza a aplicação no endereço mostrado no terminal, normalmente http://localhost:5173. Nesse modo, a API precisa estar disponível em http://localhost:8080.
+
+Comandos úteis do frontend:
+
+```bash
+npm run build
+npm run typecheck
+npm run lint
+npm test
+```
+
+## Configurações de desenvolvimento
+
+As credenciais definidas no `docker-compose.yml` são destinadas ao ambiente local:
+
+- Banco: `db_projeto_votacao`
+- Usuário: `root`
+- Senha: `db1234#`
+
+Para fins de desenvolvimento as credenciais foram expostas direntamente no compose.

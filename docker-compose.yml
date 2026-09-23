@@ -1,0 +1,36 @@
+services:
+  mysql:
+    image: mysql:8.0
+    container_name: mysql-votacao
+    ports:
+      - "3307:3306"
+    environment:
+      MYSQL_ROOT_PASSWORD: db1234#
+      MYSQL_DATABASE: db_projeto_votacao
+    healthcheck:
+      test: ["CMD-SHELL",  "mysql -u root -pdb1234# -e 'SELECT 1' db_projeto_votacao"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+
+  votacao-api:
+    build: ./projeto-votacao
+    container_name: votacao-api
+    ports:
+      - "8080:8080"
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:mysql://mysql:3306/db_projeto_votacao
+      - SPRING_DATASOURCE_USERNAME=root
+      - SPRING_DATASOURCE_PASSWORD=db1234#
+    depends_on:
+      mysql:
+        condition: service_healthy
+
+  votacao-app:
+    build: ./votacao-app
+    container_name: votacao-app
+    ports:
+      - "3000:80"
+    depends_on:
+      - votacao-api
