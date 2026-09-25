@@ -13,8 +13,8 @@ export const ResultPage = () => {
   const navigate = useNavigate()
 
   const { data } = useQuery({
-    queryKey: ["agendas", page],
-    queryFn: () => agendaService.getResults(page)
+    queryKey: ["agendas-result", page],
+    queryFn: () => agendaService.getResults(page),
   })
   const totalPages = data?.totalPages ?? 1
 

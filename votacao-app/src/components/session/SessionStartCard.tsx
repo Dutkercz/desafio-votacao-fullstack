@@ -29,6 +29,7 @@ const SessionStartCard = ({ agendaId }: SessionStartCardProps) => {
     onSuccess: () => {
       toast.success("Sessão iniciada com sucesso!")
       queryClient.invalidateQueries({ queryKey: ["agendas"] })
+      queryClient.invalidateQueries({ queryKey: ["agendas-result"] })
     },
     onError: (error: AxiosError<BackendError>) => {
       onError(error)

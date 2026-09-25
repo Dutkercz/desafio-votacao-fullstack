@@ -37,10 +37,13 @@ export const useCountdown = (endDate: string) => {
 
   const endSessionMutation = useMutation({
     mutationFn: (id: number) => sessionService.endSession(id),
-    onSuccess: () => queryClient.invalidateQueries({ queryKey: ["agendas"] }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["agendas"] })
+      queryClient.invalidateQueries({ queryKey: ["agendas-result"] })
+    },
     onError: (error: AxiosError<BackendError>) => {
       onError(error)
-    }
+    },
   })
 
   const handleSubmit = (id: number) => {

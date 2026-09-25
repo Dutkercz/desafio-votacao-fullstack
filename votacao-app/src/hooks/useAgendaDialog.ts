@@ -15,6 +15,7 @@ export const useAgendaDialog = ({ setOpen }: { setOpen: (v: boolean) => void }) 
       setTitle("")
       setOpen(false)
       queryClient.invalidateQueries({ queryKey: ["agendas"] })
+      queryClient.invalidateQueries({ queryKey: ["agendas-result"] })
     },
     onError: (error: AxiosError<BackendError>) => {
       onError(error)

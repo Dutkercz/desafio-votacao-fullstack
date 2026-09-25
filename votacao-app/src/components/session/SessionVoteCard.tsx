@@ -2,7 +2,7 @@ import { Countdown } from "@/components/countdown/Countdown"
 import { Button } from "@/components/ui/button"
 import { Label } from "@/components/ui/label"
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
-import { useState } from "react"
+import { useState, type Dispatch, type SetStateAction } from "react"
 import { toast } from "sonner"
 import { useMutation, useQueryClient } from "@tanstack/react-query"
 import type { AxiosError } from "axios"
@@ -16,11 +16,12 @@ import { Card, CardContent } from "../ui/card"
 type SessionVoteCardProps = {
   session: SessionResponseDto
   agendaId: number
+  associateId: number
+  setAssociateId: Dispatch<SetStateAction<number>>
 }
 
-const SessionVoteCard = ({ session, agendaId }: SessionVoteCardProps) => {
+const SessionVoteCard = ({ session, agendaId, associateId, setAssociateId }: SessionVoteCardProps) => {
   const [voteOption, setVoteOption] = useState("")
-  const [associateId, setAssociateId] = useState<number>(1) //inicia com o usuario de ID 1
   const queryClient = useQueryClient()
 
   const voteMutation = useMutation({
@@ -33,6 +34,7 @@ const SessionVoteCard = ({ session, agendaId }: SessionVoteCardProps) => {
       //pegaria o ID do usuario
       setAssociateId(() => associateId + 1)
       queryClient.invalidateQueries({ queryKey: ["agendas"] })
+      queryClient.invalidateQueries({ queryKey: ["agendas-result"] })
     },
     onError: (error: AxiosError<BackendError>) => {
       onError(error)

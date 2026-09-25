@@ -3,12 +3,15 @@ import SessionVoteCard from '@/components/session/SessionVoteCard'
 import SessionStartCard from '@/components/session/SessionStartCard'
 import type { AgendaCardResponse } from '@/types/agenda'
 import { CalendarRange } from 'lucide-react'
+import type { Dispatch, SetStateAction } from 'react'
 
 type AgendaCardProps = {
   agenda: AgendaCardResponse
+  associateId : number
+  setAssociateId: Dispatch<SetStateAction<number>>
 }
 
-const AgendaCard = ({ agenda }: AgendaCardProps) => {
+const AgendaCard = ({ agenda, associateId, setAssociateId }: AgendaCardProps) => {
   const session = agenda.sessao
 
   const stylesMap: Record<string, string> = {
@@ -42,7 +45,10 @@ const AgendaCard = ({ agenda }: AgendaCardProps) => {
       <CardContent className="px-4 py-4 sm:px-5">
         {session?.status === "EM_ANDAMENTO" ? (
           /*Primeiro card é de sessão já em votação */
-          <SessionVoteCard agendaId={agenda.id} session={session} />
+          <SessionVoteCard 
+          associateId={associateId}
+          setAssociateId={setAssociateId}
+          agendaId={agenda.id} session={session} />
         )
           :
           (

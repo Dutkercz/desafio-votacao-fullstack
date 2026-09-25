@@ -7,12 +7,17 @@ import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import { Dialog, DialogTrigger } from "@/components/ui/dialog"
 import { useQuery } from "@tanstack/react-query"
-import { useState } from "react"
+import { useState, type Dispatch, type SetStateAction } from "react"
 import { useNavigate } from "react-router-dom"
 import type { AgendaCardResponse } from "@/types/agenda"
 import { Separator } from "@/components/ui/separator"
 
-const HomePage = () => {
+type HomePagePrps = {
+  associateId : number
+  setAssociateId: Dispatch<SetStateAction<number>>
+}
+
+const HomePage = ({associateId, setAssociateId} : HomePagePrps) => {
   const [openPauta, setOpenPauta] = useState(false)
   const [openCadastro, setOpenCadastro] = useState(false)
   const [page, setPage] = useState(0)
@@ -74,7 +79,8 @@ const HomePage = () => {
               <div
                 className='grid grid-cols-1 gap-2 sm:grid-cols-1 lg:grid-cols-2 xl:grid-cols-2'>
                 {agendaContent.map((agenda: AgendaCardResponse) => (
-                  <AgendaCard key={agenda.id} agenda={agenda} />
+                  <AgendaCard associateId={associateId} setAssociateId={setAssociateId}
+                    key={agenda.id} agenda={agenda} />
                 ))}
               </div>
             ) : (
