@@ -9,6 +9,7 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
+import java.sql.SQLIntegrityConstraintViolationException;
 import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
@@ -29,7 +30,7 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ProblemDetail> entidadeNaoEncontradaException(ResourceNotFoundException e) {
         ProblemDetail detail = ProblemDetail.forStatusAndDetail(HttpStatusCode.valueOf(404),
                                                                 e.getMessage());
-        log.warn("Cadastro não encontrado {}", e.getMessage());
+        log.warn("Não encontrado {}", e.getMessage());
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(detail);
     }
 
@@ -58,5 +59,17 @@ public class GlobalExceptionHandler {
             errors.put("detail", error.getDefaultMessage());
         });
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errors);
+    }
+
+    @ExceptionHandler(SQLIntegrityConstraintViolationException.class)
+    public  ResponseEntity<ProblemDetail> sessaoIntegrity(SQLIntegrityConstraintViolationException e) {
+        return ResponseEntity.badRequest().body(
+                ProblemDetail.forStatusAndDetail(HttpStatusCode.valueOf(e.getErrorCode()),e.getMessage()));
+    }
+
+    @ExceptionHandler(Exception.class)
+    public ResponseEntity<String> sessaoException(Exception e) {
+        log.error(e.getMessage());
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
     }
 }

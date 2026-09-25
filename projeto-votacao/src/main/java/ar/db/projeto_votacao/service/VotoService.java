@@ -53,7 +53,6 @@ public class VotoService {
              });
 
         var resposta = apiVerificadoraDeCpf.isCpfValido(associado.getCpf());
-        log.info("Resposta API externa {}", resposta);
         if (resposta.statusCode() != 200) {
             throw new ResourceNotFoundException(resposta.status());
         }
