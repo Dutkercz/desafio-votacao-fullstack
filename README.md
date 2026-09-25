@@ -2,6 +2,10 @@
 
 Aplicação full stack para gerenciamento de pautas e sessões de votação. O sistema permite cadastrar associados, criar pautas, abrir uma sessão de votação, registrar votos e consultar os resultados das pautas finalizadas.
 
+## Aviso importante:
+
+- **Seed de dados**: Para facilitar o uso da aplicação em um cenario de testes de votos, existe um seed de +- 3k de Associados, mas o fluxo de cadastro ainda existe.
+
 ## Visão geral
 
 O projeto é dividido em três serviços:
@@ -9,6 +13,7 @@ O projeto é dividido em três serviços:
 - **Frontend**: aplicação React + TypeScript construída com Vite e servida pelo Nginx.
 - **API**: aplicação Spring Boot com Java 21, Spring Data JPA, validação, Flyway e documentação OpenAPI.
 - **Banco de dados**: MySQL 8.
+
 
 ## Requisitos
 
